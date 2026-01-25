@@ -54,7 +54,6 @@ function App() {
           exit="exit"
           className="page-wrapper"
         >
-          {/* 移除了内联 style，全部交由 CSS 控制 */}
           <div className="page-content">
             {renderPage()}
           </div>
