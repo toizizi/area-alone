@@ -12,8 +12,6 @@ body {
   height: 100vh;
   position: relative;
 }
-
-/* 通用：背景纹理 */
 .textured-bg::before {
   content: "";
   position: absolute;
@@ -26,7 +24,6 @@ body {
   z-index: 0;
 }
 
-/* 页面 1: 主页 */
 .page-home {
   width: 100%;
   height: 100%;
@@ -46,21 +43,20 @@ body {
   font-family: inherit; font-size: 1rem;
 }
 
-/* 页面 2: STU */
+
 .page-stu {
   width: 100%;
   height: 100%;
-  background-color: #FFF9C5; /* 淡黄 */
+  background-color: #FFF9C5; 
   position: absolute;
   top: 0; left: 0;
 }
 
-/* 页面 3: BLOG */
 .page-blog {
   width: 100%;
   height: 100%;
   display: flex;
-  background-color: #F2EBE5; /* 暖米灰 */
+  background-color: #F2EBE5; 
   position: absolute;
   top: 0; left: 0;
 }
@@ -79,7 +75,6 @@ body {
   overflow-y: auto;
 }
 
-/* 通用导航组件样式 */
 .btn-back {
   margin-top: auto;
   padding: 10px 20px;

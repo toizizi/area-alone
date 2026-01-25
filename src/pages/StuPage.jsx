@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { colors } from '../constants/colors';
+
 /* feeling */
 const insightsData = [
     { id: 1, title: "关于持续性：", content: "或许是因为我对时间的怠慢，我常常允许自己的情绪第一，STUDY-第二，For me ,学习是一个缓慢且持久的事情。" },
@@ -13,7 +14,7 @@ const progressData = [
     { id: 2, subject: "Python", progress: 60 },
     { id: 3, subject: "JavaScript", progress: 35 },
     { id: 4, subject: "html", progress: 80 },
-    { id: 4, subject: "CSS", progress: 75 }
+    { id: 5, subject: "CSS", progress: 75 }
 ];
 
 const TopNav = ({ activeTab, setActiveTab }) => {
@@ -29,7 +30,7 @@ const TopNav = ({ activeTab, setActiveTab }) => {
             right: '2rem',
             display: 'flex',
             gap: '1.5rem',
-            zIndex: 50 
+            zIndex: 50
         }}>
             {menuItems.map((item) => (
                 <motion.div
@@ -70,7 +71,7 @@ const InsightsContent = () => (
                     key={insight.id}
                     initial={{ opacity: 0, y: 30 }}
                     animate={{ opacity: 1, y: 0 }}
-                    transition={{ delay: index * 0.1 }} 
+                    transition={{ delay: index * 0.1 }}
                     whileHover={{ y: -5, boxShadow: '0 8px 25px rgba(0,0,0,0.08)' }}
                     style={{
                         backgroundColor: colors.cardBg,
@@ -115,8 +116,9 @@ const ProgressContent = () => (
                         overflow: 'hidden'
                     }}>
                         <motion.div
+                            key={`progress-bar- ${item.id}`} 
                             initial={{ width: 0 }}
-                            animate={{ width: `${item.progress}%` }}
+                            animate={{ width: ` ${item.progress}%` }} 
                             transition={{ duration: 1, ease: "easeOut" }}
                             style={{
                                 height: '100%',
@@ -154,11 +156,13 @@ function StuPage({ onBack }) {
         }}>
             <TopNav activeTab={activeTab} setActiveTab={setActiveTab} />
 
-            <div style={{
+            <div className="hide-scrollbar" style={{
                 flex: 1,
-                marginTop: '5rem',
-                overflowY: 'auto',
-                padding: '0 1rem 2rem 1rem'
+                paddingTop: '6rem',
+                paddingBottom: '2rem',
+                paddingLeft: '1rem',
+                paddingRight: '1rem',
+                overflowY: 'auto'
             }}>
                 <AnimatePresence mode="wait">
                     <motion.div
@@ -173,7 +177,6 @@ function StuPage({ onBack }) {
                 </AnimatePresence>
             </div>
 
-{/* return */}
             <motion.button
                 onClick={onBack}
                 initial={{ opacity: 0, x: -20 }}

@@ -5,12 +5,11 @@ import StuPage from './pages/StuPage';
 import BlogPage from './pages/BlogPage';
 import './App.css';
 
-
 const pageVariants = {
   initial: {
     opacity: 0,
-    scale: 0.98, 
-    filter: 'blur(4px)' 
+    scale: 0.98,
+    filter: 'blur(4px)'
   },
   enter: {
     opacity: 1,
@@ -18,7 +17,7 @@ const pageVariants = {
     filter: 'blur(0px)',
     transition: {
       duration: 0.8,
-      ease: [0.25, 0.1, 0.25, 1.0] 
+      ease: [0.25, 0.1, 0.25, 1.0]
     }
   },
   exit: {
@@ -54,9 +53,11 @@ function App() {
           animate="enter"
           exit="exit"
           className="page-wrapper"
-          style={{ width: '100%', height: '100%' }}
         >
-          {renderPage()}
+          {/* 移除了内联 style，全部交由 CSS 控制 */}
+          <div className="page-content">
+            {renderPage()}
+          </div>
         </motion.div>
       </AnimatePresence>
     </div>
