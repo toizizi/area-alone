@@ -123,5 +123,5 @@ app.post('/api/comments', async (req, res) => {
 
 // 启动服务器
 app.listen(PORT, () => {
-    console.log(`评论后端已启动：http://localhost: $ {PORT}`);
+    console.log(`评论后端已启动：/api/comments: $ {PORT}`);
 });
