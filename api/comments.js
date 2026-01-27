@@ -1,41 +1,40 @@
-const fs = require('fs').promises;
-const path = require('path');
-const xss = require('xss');
+import { createClient } from '@supabase/supabase-js';
 
-const COMMENTS_FILE = path.join(process.cwd(), 'comments.json');
+const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
+const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
+
+if (!supabaseUrl || !supabaseAnonKey) {
+  throw new Error('Missing Supabase env vars');
+}
+
+const supabase = createClient(supabaseUrl, supabaseAnonKey);
+
+const MAX_AUTHOR_LENGTH = 30;
+const MAX_CONTENT_LENGTH = 600;
 
 export default async function handler(req, res) {
   res.setHeader('Access-Control-Allow-Origin', '*');
   res.setHeader('Access-Control-Allow-Methods', 'GET, POST');
   res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
 
-  if (req.method === 'OPTIONS') {
-    return res.status(200).end();
-  }
-
-  const MAX_AUTHOR_LENGTH = 30;
-  const MAX_CONTENT_LENGTH = 600;
+  if (req.method === 'OPTIONS') return res.status(200).end();
 
   try {
     if (req.method === 'GET') {
-      let comments = [];
-      try {
-        const data = await fs.readFile(COMMENTS_FILE, 'utf8');
-        comments = JSON.parse(data);
-        if (!Array.isArray(comments)) comments = [];
-      } catch (e) {
-        console.warn('comments.json 格式异常，重置为空数组');
-        comments = [];
-      }
-      const sorted = comments.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
-      return res.status(200).json(sorted);
+      const { data, error } = await supabase
+        .from('comments')
+        .select('*')
+        .order('created_at', { ascending: false });
+
+      if (error) throw error;
+      return res.status(200).json(data);
     }
 
     if (req.method === 'POST') {
       const { author, content, postId } = req.body;
 
       if (!author || !content) {
-        return res.status(400).json({ error:'昵称和评论都要填捏' });
+        return res.status(400).json({ error: '昵称和评论都要填捏' });
       }
 
       if (author.length > MAX_AUTHOR_LENGTH) {
@@ -45,40 +44,31 @@ export default async function handler(req, res) {
         return res.status(400).json({ error: `评论内容不能超过${MAX_CONTENT_LENGTH} 字哦` });
       }
 
-      const cleanAuthor = xss(author.trim(), { whiteList: {}, stripIgnoreTag: true });
-      const cleanContent = xss(content.trim(), { whiteList: {}, stripIgnoreTag: true });
+      const cleanAuthor = author.trim().replace(/[<>'"&]/g, '');
+      const cleanContent = content.trim().replace(/[<>'"&]/g, '');
 
       if (!cleanAuthor || !cleanContent) {
         return res.status(400).json({ error: '内容包含非法字符' });
       }
 
-      let comments = [];
-      try {
-        const data = await fs.readFile(COMMENTS_FILE, 'utf8');
-        comments = JSON.parse(data);
-        if (!Array.isArray(com以)) comments = [];
-      } catch (e) {
-        console.warn('comments.json 解析失败，重置为空数组');
-        comments = [];
-      }
+      const { data, error } = await supabase
+        .from('comments')
+        .insert([
+          {
+            author: cleanAuthor,
+            content: cleanContent,
+            post_id: postId || 'global',
+          },
+        ])
+        .select();
 
-      const newComment = {
-        id: Date.now().toString(),
-        author: cleanAuthor,
-        content: cleanContent,
-        postId: postId || 'global',
-        createdAt: new Date().toISOString(),
-      };
-
-      comments.unshift(newComment);
-      await fs.writeFile(COMMENTS_FILE, JSON.stringify(comments, null, 2), 'utf8');
-
-      return res.status(201).json(newComment);
+      if (error) throw error;
+      return res.status(201).json(data[0]);
     }
 
     res.status(405).json({ error: '方法不允许' });
   } catch (err) {
-    console.error('API 错误:', err);
+    console.error('Supabase API 错误:', err.message);
     res.status(500).json({ error: '留言提交失败，请稍后再试' });
   }
 }
