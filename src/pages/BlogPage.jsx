@@ -132,149 +132,145 @@ const CommentsContent = () => {
             const res = await fetch('/api/comments', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({
-                    postId: 'global',
-                    author: newComment.author.trim(),
-                    content: newComment.content.trim()
-                })
+                body: JSON.stringify({ author, content, postId }),
             });
 
-            if (res.ok) {
-                const saved = await res.json();
-                setComments(prev => [saved, ...prev]);
-                setNewComment({ author: '', content: '' });
-            } else {
-                alert('留言提交失败，请重试');
-            }
-        } catch (err) {
-            console.error('提交错误', err);
-            alert('网络错误，请确保后端正在运行');
-        } finally {
-            setSubmitting(false);
+        if (res.ok) {
+            const saved = await res.json();
+            setComments(prev => [saved, ...prev]);
+            setNewComment({ author: '', content: '' });
+        } else {
+            alert('留言提交失败，请重试');
         }
-    };
+    } catch (err) {
+        console.error('提交错误', err);
+        alert('网络错误，请确保后端正在运行');
+    } finally {
+        setSubmitting(false);
+    }
+};
 
-    return (
+return (
+    <motion.div
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        exit={{ opacity: 0 }}
+        transition={{ duration: 0.5 }}
+        style={{ padding: '3rem', maxWidth: '800px', margin: '0 auto' }}
+    >
+        <h2 style={{ color: colors.blogAccent, marginBottom: '2rem', fontSize: '2.2rem' }}>留言板</h2>
+
         <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            transition={{ duration: 0.5 }}
-            style={{ padding: '3rem', maxWidth: '800px', margin: '0 auto' }}
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6 }}
+            style={{
+                backgroundColor: colors.blogCardBg,
+                padding: '2rem',
+                borderRadius: '20px',
+                boxShadow: '0 4px 20px rgba(0,0,0,0.05)',
+                marginBottom: '3rem'
+            }}
         >
-            <h2 style={{ color: colors.blogAccent, marginBottom: '2rem', fontSize: '2.2rem' }}>留言板</h2>
-
-            <motion.div
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.6 }}
-                style={{
-                    backgroundColor: colors.blogCardBg,
-                    padding: '2rem',
-                    borderRadius: '20px',
-                    boxShadow: '0 4px 20px rgba(0,0,0,0.05)',
-                    marginBottom: '3rem'
-                }}
-            >
-                <h3 style={{ color: colors.blogText, marginBottom: '1rem' }}>Hello!</h3>
-                <form onSubmit={handleSubmit}>
-                    <div style={{ marginBottom: '1rem' }}>
-                        <input
-                            type="text"
-                            name="author"
-                            placeholder="your nickname"
-                            value={newComment.author}
-                            onChange={handleInputChange}
-                            style={{
-                                width: '100%',
-                                padding: '0.75rem',
-                                borderRadius: '12px',
-                                border: `1px solid  $ {colors.blogLine}`,
-                                backgroundColor: colors.sidebarBg,
-                                color: colors.blogText,
-                                fontSize: '1rem'
-                            }}
-                        />
-                    </div>
-                    <div style={{ marginBottom: '1.5rem' }}>
-                        <textarea
-                            name="content"
-                            placeholder="please leave your mark"
-                            rows="4"
-                            value={newComment.content}
-                            onChange={handleInputChange}
-                            style={{
-                                width: '100%',
-                                padding: '0.75rem',
-                                borderRadius: '12px',
-                                border: `1px solid  $ {colors.blogLine}`,
-                                backgroundColor: colors.sidebarBg,
-                                color: colors.blogText,
-                                fontSize: '1rem',
-                                resize: 'vertical'
-                            }}
-                        />
-                    </div>
-                    <motion.button
-                        type="submit"
-                        disabled={submitting}
-                        whileHover={{ scale: 1.03 }}
-                        whileTap={{ scale: 0.98 }}
+            <h3 style={{ color: colors.blogText, marginBottom: '1rem' }}>Hello!</h3>
+            <form onSubmit={handleSubmit}>
+                <div style={{ marginBottom: '1rem' }}>
+                    <input
+                        type="text"
+                        name="author"
+                        placeholder="your nickname"
+                        value={newComment.author}
+                        onChange={handleInputChange}
                         style={{
-                            padding: '0.6rem 1.5rem',
-                            backgroundColor: colors.blogAccent,
-                            color: colors.blogCardBg,
-                            border: 'none',
+                            width: '100%',
+                            padding: '0.75rem',
                             borderRadius: '12px',
-                            fontWeight: 'bold',
-                            cursor: submitting ? 'not-allowed' : 'pointer',
-                            opacity: submitting ? 0.7 : 1
+                            border: `1px solid  $ {colors.blogLine}`,
+                            backgroundColor: colors.sidebarBg,
+                            color: colors.blogText,
+                            fontSize: '1rem'
                         }}
-                    >
-                        {submitting ? '正在火速发送中...' : 'Send'}
-                    </motion.button>
-                </form>
-            </motion.div>
-
-            <div>
-                <h3 style={{ color: colors.blogText, marginBottom: '1.5rem' }}>
-                    ALL MESSAGES ({comments.length})
-                </h3>
-
-                {loading ? (
-                    <p style={{ color: colors.blogText, fontStyle: 'italic' }}>加载中...</p>
-                ) : comments.length === 0 ? (
-                    <p style={{ color: colors.blogText, fontStyle: 'italic' }}></p>
-                ) : (
-                    <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
-                        {comments.map((comment, index) => (
-                            <motion.div
-                                key={comment.id || index}
-                                initial={{ opacity: 0, y: 10 }}
-                                animate={{ opacity: 1, y: 0 }}
-                                transition={{ delay: index * 0.05 }}
-                                style={{
-                                    backgroundColor: colors.sidebarBg,
-                                    padding: '1.5rem',
-                                    borderRadius: '16px',
-                                    borderLeft: `4px solid  $ {colors.blogAccent}`,
-                                    position: 'relative'
-                                }}
-                            >
-                                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '0.8rem' }}>
-                                    <strong style={{ color: colors.blogAccent }}>{comment.author}</strong>
-                                    <span style={{ fontSize: '0.85rem', color: colors.blogText, opacity: 0.7 }}>
-                                        {new Date(comment.createdAt).toLocaleString('zh-CN')}
-                                    </span>
-                                </div>
-                                <p style={{ color: colors.blogText, lineHeight: 1.6, margin: 0 }}>{comment.content}</p>
-                            </motion.div>
-                        ))}
-                    </div>
-                )}
-            </div>
+                    />
+                </div>
+                <div style={{ marginBottom: '1.5rem' }}>
+                    <textarea
+                        name="content"
+                        placeholder="please leave your mark"
+                        rows="4"
+                        value={newComment.content}
+                        onChange={handleInputChange}
+                        style={{
+                            width: '100%',
+                            padding: '0.75rem',
+                            borderRadius: '12px',
+                            border: `1px solid  $ {colors.blogLine}`,
+                            backgroundColor: colors.sidebarBg,
+                            color: colors.blogText,
+                            fontSize: '1rem',
+                            resize: 'vertical'
+                        }}
+                    />
+                </div>
+                <motion.button
+                    type="submit"
+                    disabled={submitting}
+                    whileHover={{ scale: 1.03 }}
+                    whileTap={{ scale: 0.98 }}
+                    style={{
+                        padding: '0.6rem 1.5rem',
+                        backgroundColor: colors.blogAccent,
+                        color: colors.blogCardBg,
+                        border: 'none',
+                        borderRadius: '12px',
+                        fontWeight: 'bold',
+                        cursor: submitting ? 'not-allowed' : 'pointer',
+                        opacity: submitting ? 0.7 : 1
+                    }}
+                >
+                    {submitting ? '正在火速发送中...' : 'Send'}
+                </motion.button>
+            </form>
         </motion.div>
-    );
+
+        <div>
+            <h3 style={{ color: colors.blogText, marginBottom: '1.5rem' }}>
+                ALL MESSAGES ({comments.length})
+            </h3>
+
+            {loading ? (
+                <p style={{ color: colors.blogText, fontStyle: 'italic' }}>加载中...</p>
+            ) : comments.length === 0 ? (
+                <p style={{ color: colors.blogText, fontStyle: 'italic' }}></p>
+            ) : (
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
+                    {comments.map((comment, index) => (
+                        <motion.div
+                            key={comment.id || index}
+                            initial={{ opacity: 0, y: 10 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            transition={{ delay: index * 0.05 }}
+                            style={{
+                                backgroundColor: colors.sidebarBg,
+                                padding: '1.5rem',
+                                borderRadius: '16px',
+                                borderLeft: `4px solid  $ {colors.blogAccent}`,
+                                position: 'relative'
+                            }}
+                        >
+                            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '0.8rem' }}>
+                                <strong style={{ color: colors.blogAccent }}>{comment.author}</strong>
+                                <span style={{ fontSize: '0.85rem', color: colors.blogText, opacity: 0.7 }}>
+                                    {new Date(comment.createdAt).toLocaleString('zh-CN')}
+                                </span>
+                            </div>
+                            <p style={{ color: colors.blogText, lineHeight: 1.6, margin: 0 }}>{comment.content}</p>
+                        </motion.div>
+                    ))}
+                </div>
+            )}
+        </div>
+    </motion.div>
+);
 };
 
 const MomentsContent = () => (
