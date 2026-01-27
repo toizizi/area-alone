@@ -1,6 +1,6 @@
-import fs from 'fs/promises';
-import path from 'path';
-import xss from 'xss';
+const fs = require('fs').promises;
+const path = require('path');
+const xss = require('xss');
 
 const COMMENTS_FILE = path.join(process.cwd(), 'comments.json');
 
@@ -35,7 +35,7 @@ export default async function handler(req, res) {
       const { author, content, postId } = req.body;
 
       if (!author || !content) {
-        return res.status(400).json({ error: '昵称和评论都要填捏' });
+        return res.status(400).json({ error:'昵称和评论都要填捏' });
       }
 
       if (author.length > MAX_AUTHOR_LENGTH) {
@@ -56,7 +56,7 @@ export default async function handler(req, res) {
       try {
         const data = await fs.readFile(COMMENTS_FILE, 'utf8');
         comments = JSON.parse(data);
-        if (!Array.isArray(comments)) comments = [];
+        if (!Array.isArray(com以)) comments = [];
       } catch (e) {
         console.warn('comments.json 解析失败，重置为空数组');
         comments = [];
