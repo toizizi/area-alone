@@ -199,7 +199,7 @@ function StuPage({ onBack }) {
                     boxShadow: '0 4px 10px rgba(0,0,0,0.1)'
                 }}
             >
-                ← 返回首页
+                ← return
             </motion.button>
         </div>
     );

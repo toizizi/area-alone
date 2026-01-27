@@ -2,10 +2,12 @@
 export const articlesData = [
     {
         id: 1,
-        title: "噢！最近对于文章还没有想法",
-        date: "2026.01.24",
+        title: "混淆",
+        date: "2026.01.26",
         content: `
-      <p>或许需要 some time </p>
+      <p>倘若让我自己定义曾经的自己，那一定是自私的。</p>
+      <p></p>
+      <p></p>
     `
     },
    

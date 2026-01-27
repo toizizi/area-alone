@@ -1,5 +1,5 @@
 import React from 'react';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { colors } from '../constants/colors';
 import { articlesData } from '../constants/articles';
@@ -11,16 +11,17 @@ const momentsData = [
     { id: 2, desc: "此前很执念烤红薯，至从此后，我竟再也不追持于它，好奇怪", img: "/moments/红薯.jpg" },
     { id: 3, desc: "明媚的阳光，茂绿的树，cuteeee' cat，十分惬意", img: "/moments/树咪咪.jpg" },
     { id: 4, desc: "或许劳累以后允许自己得到一些平常不曾得到的东西，jogging～", img: "/moments/书烧仙草.jpg" },
-    { id: 5, desc: "倘若有一天我缩小藏在其中，会有谁愿意找到我呢？", img: "/moments/小空间.jpg" } 
+    { id: 5, desc: "倘若有一天我缩小藏在其中，会有谁愿意找到我呢？", img: "/moments/小空间.jpg" }
 ];
 
-// this guide
+// Sidebar with new 'comments' tab
 const Sidebar = ({ activeTab, setActiveTab }) => {
     const menuItems = [
         { id: 'home', label: '首页' },
         { id: 'moments', label: '朋友圈' },
         { id: 'articles', label: '文章' },
-        { id: 'music', label: '分享音乐' }
+        { id: 'music', label: '分享音乐' },
+        { id: 'comments', label: '留言' } 
     ];
 
     return (
@@ -87,6 +88,194 @@ const Sidebar = ({ activeTab, setActiveTab }) => {
                     </motion.div>
                 ))}
             </nav>
+        </motion.div>
+    );
+};
+
+const CommentsContent = () => {
+    const [comments, setComments] = useState([]);
+    const [newComment, setNewComment] = useState({ author: '', content: '' });
+    const [loading, setLoading] = useState(true);
+    const [submitting, setSubmitting] = useState(false);
+
+    useEffect(() => {
+        const fetchAllComments = async () => {
+            try {
+                const res = await fetch('/api/comments');
+                if (res.ok) {
+                    const data = await res.json();
+                    const sorted = data.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+                    setComments(sorted);
+                }
+            } catch (err) {
+                console.error('获取评论失败:', err);
+            } finally {
+                setLoading(false);
+            }
+        };
+        fetchAllComments();
+    }, []);
+
+    const handleInputChange = (e) => {
+        const { name, value } = e.target;
+        setNewComment(prev => ({ ...prev, [name]: value }));
+    };
+
+    const handleSubmit = async (e) => {
+        e.preventDefault();
+        if (!newComment.author.trim() || !newComment.content.trim()) {
+            alert('天呐，你什么都还没输入哦！');
+            return;
+        }
+
+        setSubmitting(true);
+        try {
+            const res = await fetch('/api/comments', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    postId: 'global', 
+                    author: newComment.author.trim(),
+                    content: newComment.content.trim(),
+                    createdAt: new Date().toISOString()
+                })
+            });
+
+            if (res.ok) {
+                const saved = await res.json();
+                setComments(prev => [saved, ...prev]);
+                setNewComment({ author: '', content: '' });
+            } else {
+                alert('留言提交失败，请重试');
+            }
+        } catch (err) {
+            console.error('提交错误', err);
+            alert('网络错误，请确保后端正在运行');
+        } finally {
+            setSubmitting(false);
+        }
+    };
+
+    return (
+        <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.5 }}
+            style={{ padding: '3rem', maxWidth: '800px', margin: '0 auto' }}
+        >
+            <h2 style={{ color: colors.blogAccent, marginBottom: '2rem', fontSize: '2.2rem' }}>留言板</h2>
+
+            <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.6 }}
+                style={{
+                    backgroundColor: colors.blogCardBg,
+                    padding: '2rem',
+                    borderRadius: '20px',
+                    boxShadow: '0 4px 20px rgba(0,0,0,0.05)',
+                    marginBottom: '3rem'
+                }}
+            >
+                <h3 style={{ color: colors.blogText, marginBottom: '1rem' }}>Hello!</h3>
+                <form onSubmit={handleSubmit}>
+                    <div style={{ marginBottom: '1rem' }}>
+                        <input
+                            type="text"
+                            name="author"
+                            placeholder="your nickname"
+                            value={newComment.author}
+                            onChange={handleInputChange}
+                            style={{
+                                width: '100%',
+                                padding: '0.75rem',
+                                borderRadius: '12px',
+                                border: `1px solid  $ {colors.blogLine}`,
+                                backgroundColor: colors.sidebarBg,
+                                color: colors.blogText,
+                                fontSize: '1rem'
+                            }}
+                        />
+                    </div>
+                    <div style={{ marginBottom: '1.5rem' }}>
+                        <textarea
+                            name="content"
+                            placeholder="please leave your mark"
+                            rows="4"
+                            value={newComment.content}
+                            onChange={handleInputChange}
+                            style={{
+                                width: '100%',
+                                padding: '0.75rem',
+                                borderRadius: '12px',
+                                border: `1px solid  $ {colors.blogLine}`,
+                                backgroundColor: colors.sidebarBg,
+                                color: colors.blogText,
+                                fontSize: '1rem',
+                                resize: 'vertical'
+                            }}
+                        />
+                    </div>
+                    <motion.button
+                        type="submit"
+                        disabled={submitting}
+                        whileHover={{ scale: 1.03 }}
+                        whileTap={{ scale: 0.98 }}
+                        style={{
+                            padding: '0.6rem 1.5rem',
+                            backgroundColor: colors.blogAccent,
+                            color: colors.blogCardBg,
+                            border: 'none',
+                            borderRadius: '12px',
+                            fontWeight: 'bold',
+                            cursor: submitting ? 'not-allowed' : 'pointer',
+                            opacity: submitting ? 0.7 : 1
+                        }}
+                    >
+                        {submitting ? '正在火速发送中...' : 'Send'}
+                    </motion.button>
+                </form>
+            </motion.div>
+
+            {/* 评论*/}
+            <div>
+                <h3 style={{ color: colors.blogText, marginBottom: '1.5rem' }}>
+                    ALL MESSAGES ({comments.length})
+                </h3>
+
+                {loading ? (
+                    <p style={{ color: colors.blogText, fontStyle: 'italic' }}>加载中...</p>
+                ) : comments.length === 0 ? (
+                    <p style={{ color: colors.blogText, fontStyle: 'italic' }}></p>
+                ) : (
+                    <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
+                        {comments.map((comment, index) => (
+                            <motion.div
+                                key={comment.id || index}
+                                initial={{ opacity: 0, y: 10 }}
+                                animate={{ opacity: 1, y: 0 }}
+                                transition={{ delay: index * 0.05 }}
+                                style={{
+                                    backgroundColor: colors.sidebarBg,
+                                    padding: '1.5rem',
+                                    borderRadius: '16px',
+                                    borderLeft: `4px solid  $ {colors.blogAccent}`,
+                                    position: 'relative'
+                                }}
+                            >
+                                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '0.8rem' }}>
+                                    <strong style={{ color: colors.blogAccent }}>{comment.author}</strong>
+                                    <span style={{ fontSize: '0.85rem', color: colors.blogText, opacity: 0.7 }}>
+                                        {new Date(comment.createdAt).toLocaleString('zh-CN')}
+                                    </span>
+                                </div>
+                                <p style={{ color: colors.blogText, lineHeight: 1.6, margin: 0 }}>{comment.content}</p>
+                            </motion.div>
+                        ))}
+                    </div>
+                )}
+            </div>
         </motion.div>
     );
 };
@@ -225,7 +414,6 @@ const ArticlesListContent = ({ onSelectArticle }) => (
     </motion.div>
 );
 
-// article-list
 const ArticleDetailContent = ({ article, onBack }) => (
     <motion.div
         initial={{ opacity: 0, y: 20 }}
@@ -517,7 +705,7 @@ const MusicContent = () => (
             ))}
         </div>
     </motion.div>
-)
+);
 
 function BlogPage({ onBack }) {
     const [activeTab, setActiveTab] = useState('home');
@@ -528,6 +716,7 @@ function BlogPage({ onBack }) {
             case 'home': return <HomeContent />;
             case 'moments': return <MomentsContent />;
             case 'music': return <MusicContent />;
+            case 'comments': return <CommentsContent />; 
             case 'articles':
                 if (selectedArticle) {
                     return (
@@ -550,9 +739,9 @@ function BlogPage({ onBack }) {
             exit={{ opacity: 0 }}
             style={{
                 display: 'flex',
-                height: '100%',     
+                height: '100%',
                 backgroundColor: colors.blogBg,
-                overflow: 'hidden'     
+                overflow: 'hidden'
             }}
         >
             <Sidebar activeTab={activeTab} setActiveTab={setActiveTab} />
@@ -597,7 +786,7 @@ function BlogPage({ onBack }) {
                         boxShadow: '0 4px 10px rgba(0,0,0,0.1)'
                     }}
                 >
-                    返回首页
+                    return
                 </motion.button>
             </div>
         </motion.div>
