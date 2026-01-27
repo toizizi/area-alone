@@ -5,23 +5,22 @@ import { colors } from '../constants/colors';
 import { articlesData } from '../constants/articles';
 import { musicData } from '../constants/musicData';
 
-// pyq
 const momentsData = [
     { id: 1, desc: "总是不渴望太阳时，太阳最浓烈，不止太阳", img: "/moments/军训太阳飞机.jpg" },
     { id: 2, desc: "此前很执念烤红薯，至从此后，我竟再也不追持于它，好奇怪", img: "/moments/红薯.jpg" },
     { id: 3, desc: "明媚的阳光，茂绿的树，cuteeee' cat，十分惬意", img: "/moments/树咪咪.jpg" },
     { id: 4, desc: "或许劳累以后允许自己得到一些平常不曾得到的东西，jogging～", img: "/moments/书烧仙草.jpg" },
-    { id: 5, desc: "倘若有一天我缩小藏在其中，会有谁愿意找到我呢？", img: "/moments/小空间.jpg" }
+    { id: 5, desc: "倘若有一天我缩小藏在其中，会有谁愿意找到我呢？", img: "/moments/小空间.jpg" },
+    { id: 6, desc: "与senior玩端游，可以设计房屋style，delighted!", img: "/moments/game.png" }
 ];
 
-// Sidebar with new 'comments' tab
 const Sidebar = ({ activeTab, setActiveTab }) => {
     const menuItems = [
         { id: 'home', label: '首页' },
         { id: 'moments', label: '朋友圈' },
         { id: 'articles', label: '文章' },
         { id: 'music', label: '分享音乐' },
-        { id: 'comments', label: '留言' } 
+        { id: 'comments', label: '留言' }
     ];
 
     return (
@@ -134,10 +133,9 @@ const CommentsContent = () => {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({
-                    postId: 'global', 
+                    postId: 'global',
                     author: newComment.author.trim(),
-                    content: newComment.content.trim(),
-                    createdAt: new Date().toISOString()
+                    content: newComment.content.trim()
                 })
             });
 
@@ -238,7 +236,6 @@ const CommentsContent = () => {
                 </form>
             </motion.div>
 
-            {/* 评论*/}
             <div>
                 <h3 style={{ color: colors.blogText, marginBottom: '1.5rem' }}>
                     ALL MESSAGES ({comments.length})
@@ -280,7 +277,6 @@ const CommentsContent = () => {
     );
 };
 
-// pyq content
 const MomentsContent = () => (
     <motion.div
         initial={{ opacity: 0 }}
@@ -343,7 +339,6 @@ const MomentsContent = () => (
     </motion.div>
 );
 
-// article
 const ArticlesListContent = ({ onSelectArticle }) => (
     <motion.div
         initial={{ opacity: 0 }}
@@ -491,7 +486,6 @@ const ArticleDetailContent = ({ article, onBack }) => (
     </motion.div>
 );
 
-// says
 const HomeContent = () => {
     const sayings = [
         {
@@ -499,6 +493,12 @@ const HomeContent = () => {
             date: "2026.1.24",
             content: "一直追求着完美主义直到自己疲倦，所以这个AREA暂时这样，我已疲倦，但也算是自己闲暇的安慰。希望烦躁时来到这个独属于AREA，它能够使我平静下来",
             quote: "some people want it all～"
+        },
+        {
+            id: 1,
+            date: "2026.1.27",
+            content: "到底是怎样的羁绊，完全陌生的两颗心脏才能依偎在一起",
+            quote: "I think as long as it's you "
         },
     ];
 
@@ -547,7 +547,6 @@ const HomeContent = () => {
     );
 };
 
-// music
 const MusicPlayer = ({ music }) => {
     const [isPlaying, setIsPlaying] = useState(false);
     const audioRef = React.useRef(null);
@@ -587,7 +586,6 @@ const MusicPlayer = ({ music }) => {
                 onEnded={handleEnded}
             />
 
-            {/* fengmian */}
             <div style={{
                 width: '100px',
                 height: '100px',
@@ -606,7 +604,6 @@ const MusicPlayer = ({ music }) => {
                         borderRadius: '12px'
                     }}
                 />
-                {/* 音符 */}
                 {isPlaying && (
                     <motion.div
                         initial={{ scale: 0 }}
@@ -655,7 +652,6 @@ const MusicPlayer = ({ music }) => {
                         <p style={{ margin: '0.2rem 0 0', fontSize: '0.85rem', color: colors.blogText, opacity: 0.8 }}>{music.artist}</p>
                     </div>
 
-                    {/* 播放btn*/}
                     <motion.button
                         onClick={togglePlay}
                         whileHover={{ scale: 1.1 }}
@@ -684,7 +680,6 @@ const MusicPlayer = ({ music }) => {
     );
 };
 
-// 音乐content
 const MusicContent = () => (
     <motion.div
         initial={{ opacity: 0 }}
@@ -716,7 +711,7 @@ function BlogPage({ onBack }) {
             case 'home': return <HomeContent />;
             case 'moments': return <MomentsContent />;
             case 'music': return <MusicContent />;
-            case 'comments': return <CommentsContent />; 
+            case 'comments': return <CommentsContent />;
             case 'articles':
                 if (selectedArticle) {
                     return (
