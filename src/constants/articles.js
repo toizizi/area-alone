@@ -2,10 +2,11 @@
 export const articlesData = [
     {
         id: 1,
-        title: "时间",
+        title: "Future",
         date: "2026.01.28",
         content: `
-      <p>哎呀！最近太幸福了，已经没有灵感可言了，嘿嘿</p>
+      <p>思来想去，我想第一篇文章总得有意义</p>
+      <p所以</p>
       
       `
     },
