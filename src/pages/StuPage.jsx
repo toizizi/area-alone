@@ -285,7 +285,7 @@ const VocabContent = () => {
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             style={{
-                backgroundColor: themeColors.mainBg, // 使用米色背景
+                backgroundColor: themeColors.mainBg, 
                 minHeight: '100vh',
                 padding: '2rem 1.5rem',
                 fontFamily: '"Inter", -apple-system, BlinkMacSystemFont, sans-serif'
@@ -338,6 +338,7 @@ const VocabContent = () => {
                 </motion.div>
 
                 {/* 数据概览 */}
+                关于本页导航栏
                 <motion.div
                     initial={{ y: 10, opacity: 0 }}
                     animate={{ y: 0, opacity: 1 }}
@@ -357,14 +358,14 @@ const VocabContent = () => {
                         <div
                             key={i}
                             style={{
-                                backgroundColor: themeColors.cardBg, // 浅米色卡片
+                                backgroundColor: themeColors.cardBg, 
                                 padding: '0.8rem',
                                 borderRadius: '12px',
                                 textAlign: 'center',
                                 border: `1px solid ${themeColors.line}`,
                                 color: themeColors.text
-                            }}
-                        >
+                            }} //与本STU模块的主题相同
+                        >  
                             <div style={{ fontSize: '0.8rem', marginBottom: '0.3rem', opacity: 0.8 }}>{item.label}</div>
                             <div style={{ fontSize: '1.1rem', fontWeight: 'bold', color: themeColors.accent }}>
                                 {item.value}
@@ -385,10 +386,10 @@ const VocabContent = () => {
                             padding: '2rem',
                             position: 'relative',
                             border: `1px solid ${themeColors.line}`,
-                            boxShadow: '0 4px 12px rgba(129, 90, 91, 0.05)' // 极淡的棕色阴影
+                            boxShadow: '0 4px 12px rgba(129, 90, 91, 0.05)' //阴影，淡
                         }}
                     >
-                        {/* 收藏按钮 */}
+                        {/* 收藏btn */}
                         <motion.button
                             whileHover={{ scale: 1.1 }}
                             whileTap={{ scale: 0.9 }}
@@ -404,7 +405,7 @@ const VocabContent = () => {
                                 color: favorites.has(currentWord.word) ? themeColors.accent : '#ccc'
                             }}
                         >
-                            {favorites.has(currentWord.word) ? '❤️' : '🤍'}
+                            {favorites.has(currentWord.word) ? '❤️收藏' : '🤍未收藏'}
                         </motion.button>
 
                         {/* 单词 */}
