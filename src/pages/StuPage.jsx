@@ -332,13 +332,13 @@ const VocabContent = () => {
                             onClick={() => switchMode(key)}
                             style={makeBtnStyle(mode === key)}
                         >
-                            {key === 'full' ? '完整模式' : key === 'random' ? '随机20题' : key === 'favorites' ? '收藏本' : '错题本'}
+                            {key === 'full' ? '完整模式' : key === 'random' ? '随机模式' : key === 'favorites' ? '收藏本' : '错题本'}
                         </motion.button>
                     ))}
                 </motion.div>
 
                 {/* 数据概览 */}
-                关于本页导航栏
+                {/* 关于本页导航栏 */}
                 <motion.div
                     initial={{ y: 10, opacity: 0 }}
                     animate={{ y: 0, opacity: 1 }}
