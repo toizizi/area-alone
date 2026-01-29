@@ -11,7 +11,7 @@ export const colors = {
     mainBg: '#FDF8E4',
     accent: '#815A5B',
     text: '#5D4037',
-    cardBg: '#ebe5c8',
+    cardBg: '#f7f0cb',
     line: '#E0D0D0',
 
     blogBg: '#F2EBE5',
