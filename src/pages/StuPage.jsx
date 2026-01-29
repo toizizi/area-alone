@@ -405,7 +405,7 @@ const VocabContent = () => {
                                 color: favorites.has(currentWord.word) ? themeColors.accent : '#ccc'
                             }}
                         >
-                            {favorites.has(currentWord.word) ? '❤️收藏' : '🤍未收藏'}
+                            {favorites.has(currentWord.word) ? '❤️' : '🤍'}
                         </motion.button>
 
                         {/* 单词 */}
@@ -424,14 +424,14 @@ const VocabContent = () => {
                             {currentWord.word}
                         </motion.h2>
 
-                        {/* 选项列表 */}
+                        {/* 选项list */}
                         <div style={{ display: 'flex', flexDirection: 'column', gap: '0.8rem' }}>
                             {currentWord.options?.map((option, idx) => {
                                 let bg = 'transparent';
                                 let border = themeColors.line;
                                 let color = themeColors.text;
 
-                                // 答题后
+                                // before答题
                                 if (answered && selectedOption === option) {
                                     if (isCorrect) {
                                         bg = 'rgba(129, 90, 91, 0.1)'; 
@@ -470,7 +470,7 @@ const VocabContent = () => {
                             })}
                         </div>
 
-                        {/* 反馈区 */}
+                        {/* comeback area */}
                         {answered && (
                             <motion.div
                                 initial={{ opacity: 0 }}
@@ -489,7 +489,7 @@ const VocabContent = () => {
                                     marginBottom: '1.5rem',
                                     color: isCorrect ? themeColors.accent : '#A67C7C'
                                 }}>
-                                    {isCorrect ? '你答对啦！你咋这么厉害！' : `💡 正确答案：${currentWord.meaning}`}
+                                    {isCorrect ? '你答对啦！你咋这么厉害！' : `正确答案：${currentWord.meaning}`}
                                 </div>
 
                                 {currentQuestionIndex < total - 1 ? (
