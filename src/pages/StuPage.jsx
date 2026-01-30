@@ -134,6 +134,17 @@ const ProgressContent = () => (
         </motion.div>
     </motion.div>
 );
+
+// 打乱数组的函数
+const shuffleArray = (array) => {
+    const arr = [...array];
+    for (let i = arr.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [arr[i], arr[j]] = [arr[j], arr[i]];
+    }
+    return arr;
+};
+
 const VocabContent = () => {
     const userId = localStorage.getItem('vocab_user_id') || (() => {
         const id = 'user_' + Date.now().toString(36) + Math.random().toString(36).substr(2, 5);
@@ -142,11 +153,11 @@ const VocabContent = () => {
     })();
 
     const themeColors = {
-        mainBg: '#FDF8E4', 
-        accent: '#815A5B', 
-        text: '#5D4037',    
-        cardBg: colors.cardBg,  
-        line: '#E0D0D0',   
+        mainBg: '#FDF8E4',
+        accent: '#815A5B',
+        text: '#5D4037',
+        cardBg: colors.cardBg,
+        line: '#E0D0D0',
         white: '#FFFFFF'
     };
 
@@ -209,7 +220,7 @@ const VocabContent = () => {
         let newQuestions = [];
 
         if (newMode === 'full') {
-            newQuestions = [...cet4Vocabulary].sort(() => Math.random() - 0.5);
+            newQuestions = [...cet4Vocabulary];
         } else if (newMode === 'random') {
             newQuestions = [...cet4Vocabulary].sort(() => Math.random() - 0.5).slice(0, 20);
         } else if (newMode === 'favorites') {
@@ -217,6 +228,12 @@ const VocabContent = () => {
         } else if (newMode === 'mistakes') {
             newQuestions = cet4Vocabulary.filter(w => mistakes.has(w.word));
         }
+
+        // 对每个单词的options打乱
+        newQuestions = newQuestions.map(wordItem => ({
+            ...wordItem,
+            options: shuffleArray([...wordItem.options]) 
+        }));
 
         setQuestions(newQuestions);
         setCurrentQuestionIndex(0);
@@ -272,7 +289,7 @@ const VocabContent = () => {
         backgroundColor: isActive ? themeColors.accent : 'transparent',
         color: isActive ? '#FFF' : themeColors.text,
         border: `1px solid ${isActive ? themeColors.accent : themeColors.line}`,
-        borderRadius: '20px', 
+        borderRadius: '20px',
         cursor: 'pointer',
         fontSize: '0.9rem',
         fontWeight: isActive ? 'bold' : 'normal',
@@ -285,7 +302,7 @@ const VocabContent = () => {
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             style={{
-                backgroundColor: themeColors.mainBg, 
+                backgroundColor: themeColors.mainBg,
                 minHeight: '100vh',
                 padding: '2rem 1.5rem',
                 fontFamily: '"Inter", -apple-system, BlinkMacSystemFont, sans-serif'
@@ -313,7 +330,7 @@ const VocabContent = () => {
                     </p>
                 </motion.div>
 
-                {/* 模式切换按钮 */}
+                {/* 模式切换btn */}
                 <motion.div
                     initial={{ y: -10, opacity: 0 }}
                     animate={{ y: 0, opacity: 1 }}
@@ -338,7 +355,6 @@ const VocabContent = () => {
                 </motion.div>
 
                 {/* 数据概览 */}
-                {/* 关于本页导航栏 */}
                 <motion.div
                     initial={{ y: 10, opacity: 0 }}
                     animate={{ y: 0, opacity: 1 }}
@@ -358,14 +374,14 @@ const VocabContent = () => {
                         <div
                             key={i}
                             style={{
-                                backgroundColor: themeColors.cardBg, 
+                                backgroundColor: themeColors.cardBg,
                                 padding: '0.8rem',
                                 borderRadius: '12px',
                                 textAlign: 'center',
                                 border: `1px solid ${themeColors.line}`,
                                 color: themeColors.text
-                            }} //与本STU模块的主题相同
-                        >  
+                            }}
+                        >
                             <div style={{ fontSize: '0.8rem', marginBottom: '0.3rem', opacity: 0.8 }}>{item.label}</div>
                             <div style={{ fontSize: '1.1rem', fontWeight: 'bold', color: themeColors.accent }}>
                                 {item.value}
@@ -386,7 +402,7 @@ const VocabContent = () => {
                             padding: '2rem',
                             position: 'relative',
                             border: `1px solid ${themeColors.line}`,
-                            boxShadow: '0 4px 12px rgba(129, 90, 91, 0.05)' //阴影，淡
+                            boxShadow: '0 4px 12px rgba(129, 90, 91, 0.05)'
                         }}
                     >
                         {/* 收藏btn */}
@@ -434,11 +450,11 @@ const VocabContent = () => {
                                 // before答题
                                 if (answered && selectedOption === option) {
                                     if (isCorrect) {
-                                        bg = 'rgba(129, 90, 91, 0.1)'; 
+                                        bg = 'rgba(129, 90, 91, 0.1)';
                                         border = themeColors.accent;
                                         color = themeColors.accent;
                                     } else {
-                                        bg = 'rgba(200, 100, 100, 0.1)'; 
+                                        bg = 'rgba(200, 100, 100, 0.1)';
                                         border = '#c69898';
                                         color = '#dfb0b0';
                                     }
@@ -538,7 +554,8 @@ const VocabContent = () => {
         </motion.div>
     );
 };
-function StuPage({ onBack }) {
+
+function StuPage({ onBack, onTogglePlayer }) {
     const [activeTab, setActiveTab] = useState('insights');
 
     const renderContent = () => {
@@ -605,8 +622,19 @@ function StuPage({ onBack }) {
                     boxShadow: '0 4px 10px rgba(0,0,0,0.1)'
                 }}
             >
-                ← 返回
+                return
             </motion.button>
+
+            {/* 添加音乐ctrl*/}
+            {onTogglePlayer && (
+                <motion.button
+                    onClick={onTogglePlayer}
+                    whileHover={{ scale: 1.05, rotate: 5 }}
+                    whileTap={{ scale: 0.95 }}
+                >
+
+                </motion.button>
+            )}
         </div>
     );
 }

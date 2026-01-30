@@ -1,10 +1,10 @@
 import { motion } from 'framer-motion';
 import { colors } from '../constants/colors';
 
-function HomePage({ onNavigate }) {
+function HomePage({ onNavigate, onTogglePlayer }) {
     const lines = [];
     if (typeof window !== 'undefined') {
-        for (let i = 0; i < 50; i++) { 
+        for (let i = 0; i < 50; i++) {
             const colorPalette = [colors.line1, colors.line2, colors.line3, colors.line4, colors.line5, colors.line6];
             const color = colorPalette[Math.floor(Math.random() * colorPalette.length)];
 
@@ -17,7 +17,7 @@ function HomePage({ onNavigate }) {
 
             const duration = 10 + Math.random() * 15;
             const delay = Math.random() * 5;
-            const opacity = 0.15 + Math.random() * 0.25; 
+            const opacity = 0.15 + Math.random() * 0.25;
 
             lines.push({ color, startX, startY, endX, endY, duration, delay, opacity });
         }
@@ -77,7 +77,6 @@ function HomePage({ onNavigate }) {
             exit={{ opacity: 0 }}
             style={{ width: '100%', height: '100%', backgroundColor: colors.bg, position: 'relative', overflow: 'hidden' }}
         >
-
             {lines.map((line, i) => (
                 <DynamicLine key={i} line={line} />
             ))}

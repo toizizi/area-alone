@@ -1,9 +1,10 @@
-import React from 'react';
-import { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { colors } from '../constants/colors';
 import { articlesData } from '../constants/articles';
 import { musicData } from '../constants/musicData';
+
+// ... (保持 MomentsData, Sidebar, MomentsContent, ArticlesListContent, ArticleDetailContent, HomeContent 不变) ...
 
 const momentsData = [
     { id: 1, desc: "总是不渴望太阳时，太阳最浓烈，不止太阳", img: "/moments/军训太阳飞机.jpg" },
@@ -20,7 +21,6 @@ const Sidebar = ({ activeTab, setActiveTab }) => {
         { id: 'moments', label: '朋友圈' },
         { id: 'articles', label: '文章' },
         { id: 'music', label: '分享音乐' }
-
     ];
 
     return (
@@ -36,7 +36,7 @@ const Sidebar = ({ activeTab, setActiveTab }) => {
                 boxSizing: 'border-box',
                 display: 'flex',
                 flexDirection: 'column',
-                borderRight: `1px solid  $ {colors.blogLine}`
+                borderRight: `1px solid ${colors.blogLine}`
             }}
         >
             <motion.div
@@ -53,7 +53,7 @@ const Sidebar = ({ activeTab, setActiveTab }) => {
                     margin: '0 auto 1rem',
                     backgroundImage: 'url(/moments/头像.jpg)',
                     backgroundSize: 'cover',
-                    border: `3px solid  $ {colors.blogAccent}`,
+                    border: `3px solid ${colors.blogAccent}`,
                     boxShadow: '0 4px 15px rgba(0,0,0,0.1)'
                 }}></div>
                 <h3 style={{ margin: 0, color: colors.blogAccent, fontSize: '1.2rem' }}>Toizizi' blog</h3>
@@ -90,7 +90,6 @@ const Sidebar = ({ activeTab, setActiveTab }) => {
         </motion.div>
     );
 };
-
 
 const MomentsContent = () => (
     <motion.div
@@ -185,7 +184,7 @@ const ArticlesListContent = ({ onSelectArticle }) => (
                     whileHover={{ x: 10, backgroundColor: 'rgba(255,255,255,0.5)' }}
                     style={{
                         padding: '1.5rem 0',
-                        borderBottom: index < articlesData.length - 1 ? `1px solid  $ {colors.blogLine}` : 'none',
+                        borderBottom: index < articlesData.length - 1 ? `1px solid ${colors.blogLine}` : 'none',
                         display: 'flex',
                         alignItems: 'center',
                         cursor: 'pointer',
@@ -362,23 +361,8 @@ const HomeContent = () => {
     );
 };
 
-const MusicPlayer = ({ music }) => {
-    const [isPlaying, setIsPlaying] = useState(false);
-    const audioRef = React.useRef(null);
-
-    const togglePlay = () => {
-        if (isPlaying) {
-            audioRef.current.pause();
-        } else {
-            audioRef.current.play();
-        }
-        setIsPlaying(!isPlaying);
-    };
-
-    const handleEnded = () => {
-        setIsPlaying(false);
-    };
-
+// 播放器列表中的单个卡片
+const MusicPlayer = ({ music, isCurrentPlaying, onPlaySpecificSong, index }) => {
     return (
         <motion.div
             layout
@@ -395,12 +379,6 @@ const MusicPlayer = ({ music }) => {
                 gap: '1.5rem'
             }}
         >
-            <audio
-                ref={audioRef}
-                src={music.src}
-                onEnded={handleEnded}
-            />
-
             <div style={{
                 width: '100px',
                 height: '100px',
@@ -419,7 +397,7 @@ const MusicPlayer = ({ music }) => {
                         borderRadius: '12px'
                     }}
                 />
-                {isPlaying && (
+                {isCurrentPlaying && (
                     <motion.div
                         initial={{ scale: 0 }}
                         animate={{ scale: [1, 1.2, 1] }}
@@ -431,12 +409,12 @@ const MusicPlayer = ({ music }) => {
                             transform: 'translate(-50%, -50%)',
                             width: '40px',
                             height: '40px',
-                            backgroundColor: 'rgba(255,255,255,0.8)',
+                            backgroundColor: 'rgba(129, 90, 91, 0.8)',
                             borderRadius: '50%',
                             display: 'flex',
                             justifyContent: 'center',
                             alignItems: 'center',
-                            color: colors.blogAccent,
+                            color: '#fff',
                             fontSize: '12px'
                         }}
                     >
@@ -467,27 +445,24 @@ const MusicPlayer = ({ music }) => {
                         <p style={{ margin: '0.2rem 0 0', fontSize: '0.85rem', color: colors.blogText, opacity: 0.8 }}>{music.artist}</p>
                     </div>
 
+                    {/* 修改这里：调用 onPlaySpecificSong(index) */}
                     <motion.button
-                        onClick={togglePlay}
+                        onClick={() => onPlaySpecificSong(index)}
                         whileHover={{ scale: 1.1 }}
                         whileTap={{ scale: 0.9 }}
                         style={{
-                            width: '50px',
-                            height: '50px',
+                            padding: '0.6rem 1.2rem',
                             backgroundColor: colors.blogAccent,
-                            borderRadius: '50%',
-                            border: 'none',
-                            display: 'flex',
-                            justifyContent: 'center',
-                            alignItems: 'center',
                             color: colors.blogCardBg,
+                            border: 'none',
+                            borderRadius: '25px',
                             cursor: 'pointer',
-                            fontSize: '1.2rem',
-                            boxShadow: '0 2px 5px rgba(0,0,0,0.1)',
-                            marginLeft: '1rem'
+                            fontSize: '0.9rem',
+                            fontWeight: 'bold',
+                            boxShadow: '0 2px 5px rgba(0,0,0,0.1)'
                         }}
                     >
-                        {isPlaying ? '❚❚' : '▶'}
+                        {isCurrentPlaying ? '❚❚' : '▶'}
                     </motion.button>
                 </div>
             </div>
@@ -495,7 +470,7 @@ const MusicPlayer = ({ music }) => {
     );
 };
 
-const MusicContent = () => (
+const MusicContent = ({ onTogglePlayer, isPlaying, currentSong, onPlaySpecificSong }) => (
     <motion.div
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
@@ -509,15 +484,41 @@ const MusicContent = () => (
         }}
     >
         <h2 style={{ color: colors.blogAccent, marginBottom: '2rem', fontSize: '2.2rem' }}>分享音乐</h2>
+
+        <motion.button
+            onClick={onTogglePlayer}
+            whileHover={{ scale: 1.1 }}
+            whileTap={{ scale: 0.9 }}
+            style={{
+                marginBottom: '2rem',
+                padding: '0.8rem 1.5rem',
+                backgroundColor: colors.blogAccent,
+                color: colors.blogCardBg,
+                border: 'none',
+                borderRadius: '25px',
+                cursor: 'pointer',
+                fontSize: '1rem',
+                fontWeight: 'bold'
+            }}
+        >
+            {isPlaying ? '隐藏播放器' : '显示播放器'}
+        </motion.button>
+
         <div style={{ display: 'flex', flexDirection: 'column', gap: '2rem' }}>
             {musicData.map((music, index) => (
-                <MusicPlayer key={music.id} music={music} />
+                <MusicPlayer
+                    key={music.id}
+                    music={music}
+                    index={index}
+                    isCurrentPlaying={currentSong?.id === music.id && isPlaying}
+                    onPlaySpecificSong={onPlaySpecificSong}
+                />
             ))}
         </div>
     </motion.div>
 );
 
-function BlogPage({ onBack }) {
+function BlogPage({ onBack, onTogglePlayer, isPlaying, currentSong, onPlaySpecificSong }) {
     const [activeTab, setActiveTab] = useState('home');
     const [selectedArticle, setSelectedArticle] = useState(null);
 
@@ -525,7 +526,12 @@ function BlogPage({ onBack }) {
         switch (activeTab) {
             case 'home': return <HomeContent />;
             case 'moments': return <MomentsContent />;
-            case 'music': return <MusicContent />;
+            case 'music': return <MusicContent
+                onTogglePlayer={onTogglePlayer}
+                isPlaying={isPlaying}
+                currentSong={currentSong}
+                onPlaySpecificSong={onPlaySpecificSong}
+            />;
             case 'articles':
                 if (selectedArticle) {
                     return (
