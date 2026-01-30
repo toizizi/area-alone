@@ -162,6 +162,9 @@ const VocabContent = () => {
     };
 
     const getGlobalKey = (key) => `cet4_vocab_${userId}_global_${key}`;
+    const [progress, setProgress] = useState(() => {
+        return parseInt(localStorage.getItem(getGlobalKey('progress')) || '0', 10);
+    });
 
     // state
     const [mode, setMode] = useState('full');
@@ -185,13 +188,17 @@ const VocabContent = () => {
     const saveGlobalData = () => {
         localStorage.setItem(getGlobalKey('favorites'), JSON.stringify([...favorites]));
         localStorage.setItem(getGlobalKey('mistakes'), JSON.stringify([...mistakes]));
+        localStorage.setItem(getGlobalKey('progress'), progress.toString());
     };
 
     const loadGlobalData = () => {
         const favs = new Set(JSON.parse(localStorage.getItem(getGlobalKey('favorites')) || '[]'));
         const mists = new Set(JSON.parse(localStorage.getItem(getGlobalKey('mistakes')) || '[]'));
+        const savedProgress = parseInt(localStorage.getItem(getGlobalKey('progress')) || '0', 10);
+
         setFavorites(favs);
         setMistakes(mists);
+        setProgress(savedProgress);
     };
 
     const toggleFavorite = (word) => {
@@ -218,9 +225,11 @@ const VocabContent = () => {
         setWrongMessage('');
 
         let newQuestions = [];
+        let startIndex = 0;
 
         if (newMode === 'full') {
             newQuestions = [...cet4Vocabulary];
+            startIndex = progress;
         } else if (newMode === 'random') {
             newQuestions = [...cet4Vocabulary].sort(() => Math.random() - 0.5).slice(0, 20);
         } else if (newMode === 'favorites') {
@@ -232,20 +241,26 @@ const VocabContent = () => {
         // 对每个单词的options打乱
         newQuestions = newQuestions.map(wordItem => ({
             ...wordItem,
-            options: shuffleArray([...wordItem.options]) 
+            options: shuffleArray([...wordItem.options])
         }));
 
         setQuestions(newQuestions);
-        setCurrentQuestionIndex(0);
+        setCurrentQuestionIndex(startIndex);
     };
 
     const nextQuestion = () => {
         if (currentQuestionIndex < questions.length - 1) {
-            setCurrentQuestionIndex(p => p + 1);
+            const nextIndex = currentQuestionIndex + 1;
+            setCurrentQuestionIndex(nextIndex);
             setSelectedOption(null);
             setIsCorrect(null);
             setAnswered(false);
             setWrongMessage('');
+
+            if (mode === 'full') {
+                setProgress(nextIndex);
+                saveGlobalData();
+            }
         }
     };
 
@@ -525,7 +540,7 @@ const VocabContent = () => {
                                             boxShadow: '0 4px 10px rgba(129, 90, 91, 0.2)'
                                         }}
                                     >
-                                        下一题
+                                        next
                                     </motion.button>
                                 ) : (
                                     <div style={{
@@ -554,7 +569,6 @@ const VocabContent = () => {
         </motion.div>
     );
 };
-
 function StuPage({ onBack, onTogglePlayer }) {
     const [activeTab, setActiveTab] = useState('insights');
 

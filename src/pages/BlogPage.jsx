@@ -445,7 +445,6 @@ const MusicPlayer = ({ music, isCurrentPlaying, onPlaySpecificSong, index }) => 
                         <p style={{ margin: '0.2rem 0 0', fontSize: '0.85rem', color: colors.blogText, opacity: 0.8 }}>{music.artist}</p>
                     </div>
 
-                    {/* 修改这里：调用 onPlaySpecificSong(index) */}
                     <motion.button
                         onClick={() => onPlaySpecificSong(index)}
                         whileHover={{ scale: 1.1 }}
@@ -501,7 +500,7 @@ const MusicContent = ({ onTogglePlayer, isPlaying, currentSong, onPlaySpecificSo
                 fontWeight: 'bold'
             }}
         >
-            {isPlaying ? '隐藏播放器' : '显示播放器'}
+            {isPlaying ? '播放器' : '播放器'}
         </motion.button>
 
         <div style={{ display: 'flex', flexDirection: 'column', gap: '2rem' }}>
