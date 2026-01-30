@@ -162,11 +162,11 @@ const VocabContent = () => {
     };
 
     const getGlobalKey = (key) => `cet4_vocab_${userId}_global_${key}`;
+
     const [progress, setProgress] = useState(() => {
         return parseInt(localStorage.getItem(getGlobalKey('progress')) || '0', 10);
     });
 
-    // state
     const [mode, setMode] = useState('full');
     const [questions, setQuestions] = useState([]);
     const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
@@ -199,6 +199,10 @@ const VocabContent = () => {
         setFavorites(favs);
         setMistakes(mists);
         setProgress(savedProgress);
+
+        setTimeout(() => {
+            switchMode(mode);
+        }, 0);
     };
 
     const toggleFavorite = (word) => {
@@ -238,14 +242,19 @@ const VocabContent = () => {
             newQuestions = cet4Vocabulary.filter(w => mistakes.has(w.word));
         }
 
-        // 对每个单词的options打乱
         newQuestions = newQuestions.map(wordItem => ({
             ...wordItem,
             options: shuffleArray([...wordItem.options])
         }));
 
-        setQuestions(newQuestions);
-        setCurrentQuestionIndex(startIndex);
+        setQuestions([]);
+        setCurrentQuestionIndex(0);
+        setAnswerHistory({});
+
+        setTimeout(() => {
+            setQuestions(newQuestions);
+            setCurrentQuestionIndex(startIndex);
+        }, 0);
     };
 
     const nextQuestion = () => {
@@ -289,7 +298,6 @@ const VocabContent = () => {
 
     useEffect(() => {
         loadGlobalData();
-        switchMode('full');
     }, []);
 
     const currentWord = questions[currentQuestionIndex] || {};
@@ -325,7 +333,6 @@ const VocabContent = () => {
         >
             <div style={{ maxWidth: '700px', margin: '0 auto' }}>
 
-                {/* 标题区 */}
                 <motion.div
                     initial={{ y: -20, opacity: 0 }}
                     animate={{ y: 0, opacity: 1 }}
@@ -345,7 +352,6 @@ const VocabContent = () => {
                     </p>
                 </motion.div>
 
-                {/* 模式切换btn */}
                 <motion.div
                     initial={{ y: -10, opacity: 0 }}
                     animate={{ y: 0, opacity: 1 }}
@@ -369,7 +375,6 @@ const VocabContent = () => {
                     ))}
                 </motion.div>
 
-                {/* 数据概览 */}
                 <motion.div
                     initial={{ y: 10, opacity: 0 }}
                     animate={{ y: 0, opacity: 1 }}
@@ -405,7 +410,6 @@ const VocabContent = () => {
                     ))}
                 </motion.div>
 
-                {/* 题目卡片 */}
                 {questions.length > 0 ? (
                     <motion.div
                         key={`question-${currentQuestionIndex}`}
@@ -420,7 +424,6 @@ const VocabContent = () => {
                             boxShadow: '0 4px 12px rgba(129, 90, 91, 0.05)'
                         }}
                     >
-                        {/* 收藏btn */}
                         <motion.button
                             whileHover={{ scale: 1.1 }}
                             whileTap={{ scale: 0.9 }}
@@ -439,7 +442,6 @@ const VocabContent = () => {
                             {favorites.has(currentWord.word) ? '❤️' : '🤍'}
                         </motion.button>
 
-                        {/* 单词 */}
                         <motion.h2
                             initial={{ y: 10, opacity: 0 }}
                             animate={{ y: 0, opacity: 1 }}
@@ -455,14 +457,12 @@ const VocabContent = () => {
                             {currentWord.word}
                         </motion.h2>
 
-                        {/* 选项list */}
                         <div style={{ display: 'flex', flexDirection: 'column', gap: '0.8rem' }}>
                             {currentWord.options?.map((option, idx) => {
                                 let bg = 'transparent';
                                 let border = themeColors.line;
                                 let color = themeColors.text;
 
-                                // before答题
                                 if (answered && selectedOption === option) {
                                     if (isCorrect) {
                                         bg = 'rgba(129, 90, 91, 0.1)';
@@ -501,7 +501,6 @@ const VocabContent = () => {
                             })}
                         </div>
 
-                        {/* comeback area */}
                         {answered && (
                             <motion.div
                                 initial={{ opacity: 0 }}
@@ -540,7 +539,7 @@ const VocabContent = () => {
                                             boxShadow: '0 4px 10px rgba(129, 90, 91, 0.2)'
                                         }}
                                     >
-                                        next
+                                        下一题
                                     </motion.button>
                                 ) : (
                                     <div style={{
@@ -569,6 +568,7 @@ const VocabContent = () => {
         </motion.div>
     );
 };
+
 function StuPage({ onBack, onTogglePlayer }) {
     const [activeTab, setActiveTab] = useState('insights');
 
