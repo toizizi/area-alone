@@ -8,7 +8,8 @@ const insightsData = [
     { id: 1, title: "关于持续性：", content: "或许是因为我对时间的怠慢，我常常允许自己的情绪第一，STUDY-第二，For me ,学习是一个缓慢且持久的事情。" },
     { id: 2, title: "About this area-", content: "从来都清晰自己的能力，SO, THIS AREA即将成为一个experimental area,每当我学会一个我认为更好的技术，我将迭代重构它" },
     { id: 3, title: "新鲜feeling", content: "不否认我是一个三分钟热度的人，但慕强的倾向未曾改变，所以我预感THIS AREA 会大变样，因为我的审美和新鲜感永远在发散。" },
-    { id: 4, title: "new finding", content: "分享喜悦，我在2026.1.29发现我最适合的学习方法，就是使用平板阅读文档，如读小说一般有趣！" }
+    { id: 4, title: "new finding", content: "分享喜悦，我在2026.1.29发现我最适合的学习方法，就是使用平板阅读文档，如读小说一般有趣！" },
+    { id: 5, title: "抱怨", content: "好多好多的不完美，我不想接纳，却必须去优化，我最近不想学习了:(" }
 ];
 
 const progressData = [
@@ -25,16 +26,8 @@ const TopNav = ({ activeTab, setActiveTab }) => {
         { id: 'progress', label: 'PROGRESS' },
         { id: 'vocab', label: 'VOCAB' }
     ];
-
     return (
-        <div style={{
-            position: 'absolute',
-            top: '2rem',
-            right: '2rem',
-            display: 'flex',
-            gap: '1.5rem',
-            zIndex: 50
-        }}>
+        <div style={{ position: 'absolute', top: '2rem', right: '2rem', display: 'flex', gap: '1.5rem', zIndex: 50 }}>
             {menuItems.map((item) => (
                 <motion.div
                     key={item.id}
@@ -104,7 +97,12 @@ const ProgressContent = () => (
         <motion.div
             initial={{ opacity: 0, scale: 0.95 }}
             animate={{ opacity: 1, scale: 1 }}
-            style={{ backgroundColor: colors.cardBg, padding: '2rem', borderRadius: '16px', boxShadow: '0 4px 20px rgba(0,0,0,0.05)' }}
+            style={{
+                backgroundColor: colors.cardBg,
+                padding: '2rem',
+                borderRadius: '16px',
+                boxShadow: '0 4px 20px rgba(0,0,0,0.05)'
+            }}
         >
             {progressData.map((item) => (
                 <div key={item.id} style={{ marginBottom: '1.5rem' }}>
@@ -112,21 +110,12 @@ const ProgressContent = () => (
                         <span style={{ color: colors.text, fontWeight: 'bold' }}>{item.subject}</span>
                         <span style={{ color: colors.accent }}>{item.progress}%</span>
                     </div>
-                    <div style={{
-                        height: '10px',
-                        backgroundColor: colors.line,
-                        borderRadius: '5px',
-                        overflow: 'hidden'
-                    }}>
+                    <div style={{ height: '10px', backgroundColor: colors.line, borderRadius: '5px', overflow: 'hidden' }}>
                         <motion.div
                             initial={{ width: 0 }}
                             animate={{ width: `${item.progress}%` }}
                             transition={{ duration: 1, ease: "easeOut" }}
-                            style={{
-                                height: '10px',
-                                backgroundColor: colors.accent,
-                                borderRadius: '5px'
-                            }}
+                            style={{ height: '10px', backgroundColor: colors.accent, borderRadius: '5px' }}
                         />
                     </div>
                 </div>
@@ -135,7 +124,7 @@ const ProgressContent = () => (
     </motion.div>
 );
 
-// 打乱数组的函数
+// 打乱数组的工具函数
 const shuffleArray = (array) => {
     const arr = [...array];
     for (let i = arr.length - 1; i > 0; i--) {
@@ -146,6 +135,7 @@ const shuffleArray = (array) => {
 };
 
 const VocabContent = () => {
+    // 唯一用户ID
     const userId = localStorage.getItem('vocab_user_id') || (() => {
         const id = 'user_' + Date.now().toString(36) + Math.random().toString(36).substr(2, 5);
         localStorage.setItem('vocab_user_id', id);
@@ -163,10 +153,7 @@ const VocabContent = () => {
 
     const getGlobalKey = (key) => `cet4_vocab_${userId}_global_${key}`;
 
-    const [progress, setProgress] = useState(() => {
-        return parseInt(localStorage.getItem(getGlobalKey('progress')) || '0', 10);
-    });
-
+    // state
     const [mode, setMode] = useState('full');
     const [questions, setQuestions] = useState([]);
     const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
@@ -177,7 +164,6 @@ const VocabContent = () => {
     const [mistakes, setMistakes] = useState(new Set());
     const [answerHistory, setAnswerHistory] = useState({});
     const [wrongMessage, setWrongMessage] = useState('');
-
     const wrongTips = [
         "这次不对下次一定要对哦！",
         "小笨B，记住这个单词！",
@@ -185,20 +171,23 @@ const VocabContent = () => {
         "猜不对就别猜呗，大大的脑袋空空的脑子~"
     ];
 
+    // 保存数据到localStorage
     const saveGlobalData = () => {
         localStorage.setItem(getGlobalKey('favorites'), JSON.stringify([...favorites]));
         localStorage.setItem(getGlobalKey('mistakes'), JSON.stringify([...mistakes]));
-        localStorage.setItem(getGlobalKey('progress'), progress.toString());
+        if (mode === 'full') {
+            localStorage.setItem(getGlobalKey('progress'), currentQuestionIndex.toString());
+        }
     };
 
+    // localStorage加载数据
     const loadGlobalData = () => {
         const favs = new Set(JSON.parse(localStorage.getItem(getGlobalKey('favorites')) || '[]'));
         const mists = new Set(JSON.parse(localStorage.getItem(getGlobalKey('mistakes')) || '[]'));
         const savedProgress = parseInt(localStorage.getItem(getGlobalKey('progress')) || '0', 10);
-
         setFavorites(favs);
         setMistakes(mists);
-        setProgress(savedProgress);
+        setCurrentQuestionIndex(savedProgress);
     };
 
     const toggleFavorite = (word) => {
@@ -210,7 +199,6 @@ const VocabContent = () => {
         }
         setFavorites(newFavs);
         saveGlobalData();
-
         if (mode === 'favorites' && !newFavs.has(word)) {
             setQuestions(prev => prev.filter(q => q.word !== word));
             setCurrentQuestionIndex(0);
@@ -230,7 +218,8 @@ const VocabContent = () => {
 
         if (newMode === 'full') {
             newQuestions = [...cet4Vocabulary];
-            startIndex = progress;
+            startIndex = parseInt(localStorage.getItem(getGlobalKey('progress')) || '0', 10);
+            startIndex = Math.min(startIndex, newQuestions.length - 1);
         } else if (newMode === 'random') {
             newQuestions = [...cet4Vocabulary].sort(() => Math.random() - 0.5).slice(0, 20);
         } else if (newMode === 'favorites') {
@@ -239,13 +228,14 @@ const VocabContent = () => {
             newQuestions = cet4Vocabulary.filter(w => mistakes.has(w.word));
         }
 
+        // 对每个单词的options打乱
         newQuestions = newQuestions.map(wordItem => ({
             ...wordItem,
             options: shuffleArray([...wordItem.options])
         }));
 
         setQuestions(newQuestions);
-        setCurrentQuestionIndex(startIndex);
+        setCurrentQuestionIndex(newQuestions.length > 0 ? startIndex : 0);
     };
 
     const nextQuestion = () => {
@@ -256,16 +246,17 @@ const VocabContent = () => {
             setIsCorrect(null);
             setAnswered(false);
             setWrongMessage('');
-
-            if (mode === 'full') {
-                setProgress(nextIndex);
-                saveGlobalData();
-            }
+            saveGlobalData();
+        } else {
+            switchMode(mode);
         }
     };
 
     const handleAnswer = (option) => {
-        if (answered || !currentWord.word) return;
+        if (answered) return;
+
+        const currentWord = questions[currentQuestionIndex] || {};
+        if (!currentWord.word) return;
 
         const correct = option === currentWord.meaning;
         const newHistory = { ...answerHistory, [currentQuestionIndex]: correct };
@@ -277,6 +268,9 @@ const VocabContent = () => {
         } else {
             newMistakes.delete(currentWord.word);
             setWrongMessage('');
+            setTimeout(() => {
+                nextQuestion();
+            }, 400);
         }
 
         setAnswerHistory(newHistory);
@@ -293,14 +287,13 @@ const VocabContent = () => {
 
     useEffect(() => {
         switchMode(mode);
-    }, [favorites, mistakes, progress]);
+    }, [mode]);
 
     const currentWord = questions[currentQuestionIndex] || {};
     const total = questions.length;
     const answeredCount = Object.keys(answerHistory).length;
     const correctCount = Object.values(answerHistory).filter(Boolean).length;
     const accuracy = total > 0 && answeredCount > 0 ? Math.round((correctCount / answeredCount) * 100) : 0;
-
 
     const makeBtnStyle = (isActive) => ({
         padding: '0.6rem 1.2rem',
@@ -327,19 +320,17 @@ const VocabContent = () => {
             }}
         >
             <div style={{ maxWidth: '700px', margin: '0 auto' }}>
-
                 <motion.div
                     initial={{ y: -20, opacity: 0 }}
                     animate={{ y: 0, opacity: 1 }}
-                    style={{ textAlign: 'center', marginBottom: '2rem', borderBottom: `1px dashed ${themeColors.line}`, paddingBottom: '1.5rem' }}
+                    style={{
+                        textAlign: 'center',
+                        marginBottom: '2rem',
+                        borderBottom: `1px dashed ${themeColors.line}`,
+                        paddingBottom: '1.5rem'
+                    }}
                 >
-                    <h1 style={{
-                        color: themeColors.text,
-                        fontSize: '1.8rem',
-                        fontWeight: '700',
-                        marginBottom: '0.5rem',
-                        letterSpacing: '1px'
-                    }}>
+                    <h1 style={{ color: themeColors.text, fontSize: '1.8rem', fontWeight: '700', marginBottom: '0.5rem', letterSpacing: '1px' }}>
                         CET-4 词汇训练
                     </h1>
                     <p style={{ color: themeColors.text, fontSize: '0.95rem', opacity: 0.8 }}>
@@ -350,12 +341,7 @@ const VocabContent = () => {
                 <motion.div
                     initial={{ y: -10, opacity: 0 }}
                     animate={{ y: 0, opacity: 1 }}
-                    style={{
-                        display: 'grid',
-                        gridTemplateColumns: 'repeat(4, 1fr)',
-                        gap: '0.8rem',
-                        marginBottom: '2rem'
-                    }}
+                    style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '0.8rem', marginBottom: '2rem' }}
                 >
                     {['full', 'random', 'favorites', 'mistakes'].map((key) => (
                         <motion.button
@@ -373,12 +359,7 @@ const VocabContent = () => {
                 <motion.div
                     initial={{ y: 10, opacity: 0 }}
                     animate={{ y: 0, opacity: 1 }}
-                    style={{
-                        display: 'grid',
-                        gridTemplateColumns: 'repeat(4, 1fr)',
-                        gap: '0.8rem',
-                        marginBottom: '2rem'
-                    }}
+                    style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '0.8rem', marginBottom: '2rem' }}
                 >
                     {[
                         { label: '进度', value: `${currentQuestionIndex + 1}/${total}` },
@@ -457,7 +438,6 @@ const VocabContent = () => {
                                 let bg = 'transparent';
                                 let border = themeColors.line;
                                 let color = themeColors.text;
-
                                 if (answered && selectedOption === option) {
                                     if (isCorrect) {
                                         bg = 'rgba(129, 90, 91, 0.1)';
@@ -469,7 +449,6 @@ const VocabContent = () => {
                                         color = '#dfb0b0';
                                     }
                                 }
-
                                 return (
                                     <motion.button
                                         key={idx}
@@ -507,17 +486,18 @@ const VocabContent = () => {
                                         {wrongMessage}
                                     </p>
                                 )}
-
-                                <div style={{
-                                    fontSize: '1.2rem',
-                                    fontWeight: 'bold',
-                                    marginBottom: '1.5rem',
-                                    color: isCorrect ? themeColors.accent : '#A67C7C'
-                                }}>
-                                    {isCorrect ? '你答对啦！你咋这么厉害！' : `正确答案：${currentWord.meaning}`}
+                                <div
+                                    style={{
+                                        fontSize: '1.2rem',
+                                        fontWeight: 'bold',
+                                        marginBottom: '1.5rem',
+                                        color: isCorrect ? themeColors.accent : '#A67C7C'
+                                    }}
+                                >
+                                    {isCorrect ? '你答对啦！！' : `正确答案：${currentWord.meaning}`}
                                 </div>
 
-                                {currentQuestionIndex < total - 1 ? (
+                                {!isCorrect && currentQuestionIndex < total - 1 && (
                                     <motion.button
                                         whileHover={{ scale: 1.05 }}
                                         whileTap={{ scale: 0.95 }}
@@ -534,16 +514,12 @@ const VocabContent = () => {
                                             boxShadow: '0 4px 10px rgba(129, 90, 91, 0.2)'
                                         }}
                                     >
-                                        下一题
+                                        NEXT
                                     </motion.button>
-                                ) : (
-                                    <div style={{
-                                        padding: '0.8rem 1.5rem',
-                                        backgroundColor: 'rgba(255,255,255,0.5)',
-                                        borderRadius: '12px',
-                                        display: 'inline-block',
-                                        color: themeColors.text
-                                    }}>
+                                )}
+
+                                {isCorrect && currentQuestionIndex >= total - 1 && (
+                                    <div style={{ padding: '0.8rem 1.5rem', backgroundColor: 'rgba(255,255,255,0.5)', borderRadius: '12px', display: 'inline-block', color: themeColors.text }}>
                                         哇哇哇！本组练习已完成，小弟膜拜膜拜你！
                                     </div>
                                 )}
@@ -552,11 +528,9 @@ const VocabContent = () => {
                     </motion.div>
                 ) : (
                     <div style={{ textAlign: 'center', padding: '3rem', color: themeColors.text, opacity: 0.7 }}>
-                        {mode === 'favorites'
-                            ? '你还没有收藏的单词哦'
-                            : mode === 'mistakes'
-                                ? '目前没有错题，请继续保持哦！'
-                                : '嘿嘿,正在加载词汇...'}
+                        {mode === 'favorites' ? '你还没有收藏的单词哦' :
+                            mode === 'mistakes' ? '目前没有错题，请继续保持哦！' :
+                                '嘿嘿,正在加载词汇...'}
                     </div>
                 )}
             </div>
@@ -587,11 +561,10 @@ function StuPage({ onBack, onTogglePlayer }) {
             overflow: 'hidden'
         }}>
             <TopNav activeTab={activeTab} setActiveTab={setActiveTab} />
-
             <div className="hide-scrollbar" style={{
                 flex: 1,
                 paddingTop: '6rem',
-                paddingBottom: '3rem',
+                paddingBottom: '2rem',
                 paddingLeft: '1rem',
                 paddingRight: '1rem',
                 overflowY: 'auto'
@@ -608,7 +581,6 @@ function StuPage({ onBack, onTogglePlayer }) {
                     </motion.div>
                 </AnimatePresence>
             </div>
-
             <motion.button
                 onClick={onBack}
                 initial={{ opacity: 0, x: -20 }}
@@ -633,15 +605,8 @@ function StuPage({ onBack, onTogglePlayer }) {
             >
                 return
             </motion.button>
-
-            {/* 添加音乐ctrl*/}
             {onTogglePlayer && (
-                <motion.button
-                    onClick={onTogglePlayer}
-                    whileHover={{ scale: 1.05, rotate: 5 }}
-                    whileTap={{ scale: 0.95 }}
-                >
-
+                <motion.button onClick={onTogglePlayer} whileHover={{ scale: 1.05, rotate: 5 }} whileTap={{ scale: 0.95 }}>
                 </motion.button>
             )}
         </div>

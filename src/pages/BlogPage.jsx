@@ -3,9 +3,6 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { colors } from '../constants/colors';
 import { articlesData } from '../constants/articles';
 import { musicData } from '../constants/musicData';
-
-// ... (保持 MomentsData, Sidebar, MomentsContent, ArticlesListContent, ArticleDetailContent, HomeContent 不变) ...
-
 const momentsData = [
     { id: 1, desc: "总是不渴望太阳时，太阳最浓烈，不止太阳", img: "/moments/军训太阳飞机.jpg" },
     { id: 2, desc: "此前很执念烤红薯，至从此后，我竟再也不追持于它，好奇怪", img: "/moments/红薯.jpg" },
@@ -153,35 +150,49 @@ const MomentsContent = () => (
     </motion.div>
 );
 
+
 const ArticlesListContent = ({ onSelectArticle }) => (
     <motion.div
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        exit={{ opacity: 0 }}
-        transition={{ duration: 0.5 }}
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        exit={{ opacity: 0, y: -20 }}
+        transition={{ duration: 0.4, ease: "easeOut" }}
         style={{ padding: '3rem', maxWidth: '800px', margin: '0 auto' }}
     >
-        <h2 style={{ color: colors.blogAccent, marginBottom: '2rem', fontSize: '2.5rem' }}>Written Words</h2>
-        <motion.div
-            initial={{ opacity: 0, y: 20 }}
+        <motion.h2
+            initial={{ opacity: 0, y: -10 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6 }}
+            transition={{ duration: 0.4 }}
+            style={{ color: colors.blogAccent, marginBottom: '2rem', fontSize: '2.5rem' }}
+        >
+            Written Words
+        </motion.h2>
+
+        <motion.div
+            initial={{ opacity: 0, scale: 0.98 }}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{ duration: 0.4, ease: "easeOut" }}
             style={{
                 backgroundColor: colors.blogCardBg,
                 padding: '2rem',
                 borderRadius: '20px',
-                boxShadow: '0 4px 20px rgba(0,0,0,0.05)'
+                boxShadow: '0 8px 30px rgba(0,0,0,0.08)'
             }}
         >
             {articlesData.map((article, index) => (
                 <motion.div
                     key={article.id}
-                    layout
-                    initial={{ opacity: 0, x: -20 }}
+                    initial={{ opacity: 0, x: -15 }}
                     animate={{ opacity: 1, x: 0 }}
-                    transition={{ delay: index * 0.1 }}
+                    transition={{ delay: index * 0.06, duration: 0.2 }}
                     onClick={() => onSelectArticle(article)}
-                    whileHover={{ x: 10, backgroundColor: 'rgba(255,255,255,0.5)' }}
+                    whileHover={{
+                        x: 15,
+                        scale: 1.02,
+                        backgroundColor: 'rgba(255,255,255,0.3)',
+                        transition: { duration: 0.2 }
+                    }}
+                    whileTap={{ scale: 0.98 }}
                     style={{
                         padding: '1.5rem 0',
                         borderBottom: index < articlesData.length - 1 ? `1px solid ${colors.blogLine}` : 'none',
@@ -190,12 +201,12 @@ const ArticlesListContent = ({ onSelectArticle }) => (
                         cursor: 'pointer',
                         borderRadius: '8px',
                         paddingLeft: '0.5rem',
-                        transition: 'background 0.4s'
+                        transition: 'all 0.2s ease'
                     }}
                 >
                     <motion.div
-                        whileHover={{ rotate: 360 }}
-                        transition={{ duration: 0.6 }}
+                        whileHover={{ rotate: 360, scale: 1.1 }}
+                        transition={{ duration: 0.6, ease: "easeInOut" }}
                         style={{
                             width: '60px',
                             height: '60px',
@@ -214,8 +225,20 @@ const ArticlesListContent = ({ onSelectArticle }) => (
                         {String(index + 1).padStart(2, '0')}
                     </motion.div>
                     <div>
-                        <h3 style={{ margin: 0, color: colors.blogText, fontSize: '1.2rem' }}>{article.title}</h3>
-                        <p style={{ margin: '0.5rem 0 0', fontSize: '0.9rem', color: colors.blogAccent }}>{article.date}</p>
+                        <motion.h3
+                            whileHover={{ color: colors.blogAccent }}
+                            transition={{ duration: 0.2 }}
+                            style={{ margin: 0, color: colors.blogText, fontSize: '1.2rem' }}
+                        >
+                            {article.title}
+                        </motion.h3>
+                        <motion.p
+                            whileHover={{ opacity: 1 }}
+                            transition={{ duration: 0.2 }}
+                            style={{ margin: '0.5rem 0 0', fontSize: '0.9rem', color: colors.blogAccent, opacity: 0.8 }}
+                        >
+                            {article.date}
+                        </motion.p>
                     </div>
                 </motion.div>
             ))}
@@ -228,6 +251,7 @@ const ArticleDetailContent = ({ article, onBack }) => (
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         exit={{ opacity: 0, y: -20 }}
+        transition={{ duration: 0.4, ease: "easeOut" }}
         style={{
             padding: '3rem',
             maxWidth: '800px',
@@ -240,7 +264,8 @@ const ArticleDetailContent = ({ article, onBack }) => (
             onClick={onBack}
             initial={{ opacity: 0, x: -10 }}
             animate={{ opacity: 1, x: 0 }}
-            whileHover={{ x: 5 }}
+            whileHover={{ x: 5, scale: 1.05 }}
+            whileTap={{ scale: 0.95 }}
             style={{
                 marginBottom: '2rem',
                 background: 'none',
@@ -250,45 +275,60 @@ const ArticleDetailContent = ({ article, onBack }) => (
                 cursor: 'pointer',
                 display: 'flex',
                 alignItems: 'center',
-                fontWeight: 'bold'
+                fontWeight: 'bold',
+                transition: 'all 0.2s ease'
             }}
         >
-            ← click-return
+            click-return
         </motion.button>
 
         <motion.div
-            initial={{ scale: 0.98, opacity: 0 }}
-            animate={{ scale: 1, opacity: 1 }}
-            transition={{ duration: 0.5 }}
+            initial={{ opacity: 0, scale: 0.95 }}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{ duration: 0.4, ease: "easeOut" }}
             style={{
                 backgroundColor: colors.blogCardBg,
                 padding: '4rem',
                 borderRadius: '20px',
-                boxShadow: '0 4px 20px rgba(0,0,0,0.05)',
+                boxShadow: '0 8px 30px rgba(0,0,0,0.08)',
                 lineHeight: 1.8,
                 color: colors.blogText,
                 fontSize: '1.1rem'
             }}
         >
-            <h1 style={{
-                color: colors.blogAccent,
-                marginBottom: '0.5rem',
-                fontSize: '2.5rem',
-                fontWeight: 'bold'
-            }}>
+            <motion.h1
+                initial={{ opacity: 0, y: -10 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.4 }}
+                style={{
+                    color: colors.blogAccent,
+                    marginBottom: '0.5rem',
+                    fontSize: '2.5rem',
+                    fontWeight: 'bold'
+                }}
+            >
                 {article.title}
-            </h1>
-            <p style={{
-                fontSize: '0.9rem',
-                color: colors.blogAccent,
-                marginBottom: '3rem',
-                opacity: 0.7,
-                fontStyle: 'italic'
-            }}>
-                {article.date}
-            </p>
+            </motion.h1>
 
-            <div
+            <motion.p
+                initial={{ opacity: 0, y: -5 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.3, delay: 0.1 }}
+                style={{
+                    fontSize: '0.9rem',
+                    color: colors.blogAccent,
+                    marginBottom: '3rem',
+                    opacity: 0.7,
+                    fontStyle: 'italic'
+                }}
+            >
+                {article.date}
+            </motion.p>
+
+            <motion.div
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                transition={{ duration: 0.4, delay: 0.2 }}
                 className="article-content"
                 dangerouslySetInnerHTML={{ __html: article.content }}
                 style={{
@@ -361,7 +401,6 @@ const HomeContent = () => {
     );
 };
 
-// 播放器列表中的单个卡片
 const MusicPlayer = ({ music, isCurrentPlaying, onPlaySpecificSong, index }) => {
     return (
         <motion.div
