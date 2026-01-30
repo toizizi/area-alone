@@ -199,10 +199,6 @@ const VocabContent = () => {
         setFavorites(favs);
         setMistakes(mists);
         setProgress(savedProgress);
-
-        setTimeout(() => {
-            switchMode(mode);
-        }, 0);
     };
 
     const toggleFavorite = (word) => {
@@ -227,6 +223,7 @@ const VocabContent = () => {
         setIsCorrect(null);
         setAnswered(false);
         setWrongMessage('');
+        setAnswerHistory({});
 
         let newQuestions = [];
         let startIndex = 0;
@@ -247,14 +244,8 @@ const VocabContent = () => {
             options: shuffleArray([...wordItem.options])
         }));
 
-        setQuestions([]);
-        setCurrentQuestionIndex(0);
-        setAnswerHistory({});
-
-        setTimeout(() => {
-            setQuestions(newQuestions);
-            setCurrentQuestionIndex(startIndex);
-        }, 0);
+        setQuestions(newQuestions);
+        setCurrentQuestionIndex(startIndex);
     };
 
     const nextQuestion = () => {
@@ -299,6 +290,10 @@ const VocabContent = () => {
     useEffect(() => {
         loadGlobalData();
     }, []);
+
+    useEffect(() => {
+        switchMode(mode);
+    }, [favorites, mistakes, progress]);
 
     const currentWord = questions[currentQuestionIndex] || {};
     const total = questions.length;
@@ -596,7 +591,7 @@ function StuPage({ onBack, onTogglePlayer }) {
             <div className="hide-scrollbar" style={{
                 flex: 1,
                 paddingTop: '6rem',
-                paddingBottom: '2rem',
+                paddingBottom: '3rem',
                 paddingLeft: '1rem',
                 paddingRight: '1rem',
                 overflowY: 'auto'

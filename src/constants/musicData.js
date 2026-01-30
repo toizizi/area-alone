@@ -38,6 +38,22 @@ export const musicData = [
         cover: "/music/雨过后的风景.png" ,
         src: "/music/雨过后的风景.mp3",
         thought: "恨你帶來分離"
+    },
+    {
+        id: 6,
+        title: "一人一花",
+        artist: "阿朵",
+        cover: "/music/一人一花.jpg" ,
+        src: "/music/一人一花.mp3",
+        thought: "我想我会爱上一个人，他会让我茁壮成长，自由绽放"
+    },
+    {
+        id: 7,
+        title: "玻璃",
+        artist: "自由散漫乐团",
+        cover: "/music/玻璃.webp" ,
+        src: "/music/玻璃.mp3",
+        thought: "承诺是玻璃，好在我会很爱你~"
     }
 
 ];
