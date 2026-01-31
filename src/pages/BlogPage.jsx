@@ -357,8 +357,8 @@ const HomeContent = () => {
         {
             id: 3,
             date: "2026.2.1",
-            content: "我想细水长流，渐入人心，想让未来爱人逐渐沾染上我的的气味",
-            quote: "miss,wait"
+            content: "此刻，我好想细水长流，渐入人心，想让未来的爱人逐渐沾染上我的气味",
+            quote: "欲哭无泪了，刷tiktok感触了"
         },
     ];
 
