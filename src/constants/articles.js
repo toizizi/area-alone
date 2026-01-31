@@ -25,7 +25,6 @@ export const articlesData = [
       <p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;没有踏入社会，受限还不够多，文字可能会天真，但如果真是这样。</p>
       <br>
       <p>就天真一辈子吧</p>
-      
       `
     },
    

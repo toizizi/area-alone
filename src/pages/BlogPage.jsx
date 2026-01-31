@@ -349,10 +349,16 @@ const HomeContent = () => {
             quote: "some people want it all～"
         },
         {
-            id: 1,
+            id: 2,
             date: "2026.1.27",
             content: "我之所以奉上真心，只是愿得到最真挚的缪斯",
             quote: "never regret giving "
+        },
+        {
+            id: 3,
+            date: "2026.2.1",
+            content: "我想细水长流，渐入人心，想让未来爱人逐渐沾染上我的的气味",
+            quote: "miss,wait"
         },
     ];
 
