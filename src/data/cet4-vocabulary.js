@@ -77,7 +77,7 @@ export const cet4Vocabulary = [
   { word: "bulk", meaning: "体积；大量", options: ["体积；大量", "少量", "重量", "价值"] },
   { word: "capable", meaning: "有能力的", options: ["有能力的", "无能的", "愿意的", "害怕的"] },
   { word: "capacity", meaning: "能力；容量", options: ["能力；容量", "缺陷", "需求", "限制"] },
-  { word: "capture", meaning: "捕获；吸引（注意力）", options: ["捕获；吸引（注意力）", "释放", "忽视", "失去"] },
+  { word: "capture", meaning: "捕获；吸引（注意力）", options: ["捕获", "释放", "忽视", "失去"] },
   { word: "cease", meaning: "停止", options: ["停止", "开始", "继续", "加速"] },
   { word: "certify", meaning: "证明；认证", options: ["证明；认证", "否认", "怀疑", "伪造"] },
   { word: "chaos", meaning: "混乱", options: ["混乱", "秩序", "和平", "安静"] },

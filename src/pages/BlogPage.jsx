@@ -9,7 +9,8 @@ const momentsData = [
     { id: 3, desc: "明媚的阳光，茂绿的树，cuteeee' cat，十分惬意", img: "/moments/树咪咪.jpg" },
     { id: 4, desc: "或许劳累以后允许自己得到一些平常不曾得到的东西，jogging～", img: "/moments/书烧仙草.jpg" },
     { id: 5, desc: "倘若有一天我缩小藏在其中，会有谁愿意找到我呢？", img: "/moments/小空间.jpg" },
-    { id: 6, desc: "与senior玩端游，可以设计房屋style，delighted!", img: "/moments/game.png" }
+    { id: 6, desc: "与senior玩端游，可以设计房屋style，delighted!", img: "/moments/game.png" },
+    { id: 6, desc: "令人们在游戏中最满意的住宅出现了，嘿嘿嘿", img: "/moments/game1.png" }
 ];
 
 const Sidebar = ({ activeTab, setActiveTab }) => {

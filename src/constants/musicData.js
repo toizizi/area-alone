@@ -54,6 +54,14 @@ export const musicData = [
         cover: "/music/玻璃.webp" ,
         src: "/music/玻璃.mp3",
         thought: "承诺是玻璃，好在我会很爱你~"
+    },
+    {
+        id: 8,
+        title: "海海海",
+        artist: "阿悄",
+        cover: "/music/海海海.webp" ,
+        src: "/music/海海海.mp3",
+        thought: "深得喜欢，致命扼腕"
     }
 
 ];
