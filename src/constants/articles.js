@@ -48,11 +48,11 @@ export const articlesData = [
 <br>
 <p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;你愿意一天陪我两小时，那我一定会要求你明天陪我三个小时、四个小时、更多、最多。若你愿意撒娇索要礼物，那我一定会要求你的索要贵一点、有代表一点、再多一点，让我的爱定要比它更重一点。</p>
 <br>
-<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;对待我，你有多需要我，依赖我，有多么想就这样陪在我的身边，一定要张口告诉我。</p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;对待我，你有多需要我，依赖我，有多么想就这样陪在我的身边，一定要张口告诉我，满足我一点又不止一点的私心。</p>
 <br>
-<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;亲爱的，如果是娓娓道来，拜托你要恃宠而骄。</p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;亲爱的，如果你要娓娓道来，拜托你要恃宠而骄。</p>
 <br>
-<p>对我来说，不过是小猫咪撒娇</p>
+<p>因为对我来说，不过是小猫撒娇</p>
       `
   },
 
